@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Danh sách khóa đã lưu</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #2980b9;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #3498db;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .note {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+    .pem-view {
+      white-space: pre-wrap;
+      background: #f9f9f9;
+      padding: 10px;
+      margin-top: 8px;
+      display: none;
+      border-left: 4px solid #2980b9;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📁 Danh sách khóa đã lưu của <%= username %></h1>
+
+  <% if (keys.length === 0) { %>
+    <p>Chưa có khóa nào được tạo.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>🔐 Mục đích sử dụng</th>
+          <th>🕒 Thời gian tạo</th>
+          <th>📥 Khóa công khai</th>
+          <th>📥 Khóa cá nhân</th>
+          <th>🔎 Xem nội dung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% keys.forEach(key => { %>
+          <tr>
+            <td><%= key.purpose %></td>
+            <td><%= new Date(key.createdAt).toLocaleString("vi-VN") %></td>
+            <td>
+              <a href="/download/public/<%= username %>/<%= key.safePurpose %>">
+                <button>Tải .pem</button>
+              </a>
+            </td>
+            <td>
+              <a href="/download/private/<%= username %>/<%= key.safePurpose %>">
+                <button>Tải .pem</button>
+              </a>
+            </td>
+            <td>
+              <button onclick="toggleView('<%= key.safePurpose %>', 'public')">Xem công khai</button>
+              <button onclick="toggleView('<%= key.safePurpose %>', 'private')">Xem cá nhân</button>
+              <div id="view-<%= key.safePurpose %>-public" class="pem-view"></div>
+              <div id="view-<%= key.safePurpose %>-private" class="pem-view"></div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <div class="note">
+    Gợi ý: Bạn có thể tạo thêm khóa mới từ trang chính và xem chúng tại đây.
+  </div>
+<a href="/rsa-tool/<%= username %>">
+  <button style="margin-top: 10px; padding: 10px 15px; border-radius: 5px; cursor: pointer; background-color: #3498db; color: white; border: none;">
+    🔐 Đến trang Mã hóa / Giải mã
+  </button>
+</a>    
+<a href="/dashboard/<%= username %>">
+  <button style="margin-top: 10px; padding: 10px 15px; border-radius: 5px; cursor: pointer; background-color: #27ae60; color: white; border: none;">
+    🏠 Quay về Home
+  </button>
+</a>
+  <script>
+    function toggleView(purpose, type) {
+      const id = `view-${purpose}-${type}`;
+      const div = document.getElementById(id);
+
+      if (div.style.display === "block") {
+        div.style.display = "none";
+        return;
+      }
+
+      fetch(`/view/${type}/<%= username %>/${purpose}`)
+        .then(res => res.ok ? res.text() : Promise.reject("Không tìm thấy khóa."))
+        .then(text => {
+          div.textContent = text;
+          div.style.display = "block";
+        })
+        .catch(err => {
+          div.textContent = err;
+          div.style.display = "block";
+        });
+    }
+  </script>
+</body>
+</html>

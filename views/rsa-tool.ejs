@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔐 RSA Mã hóa / Giải mã</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    textarea, input[type="text"], select, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #2980b9;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .result, .error {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    .result {
+      background-color: #ecf0f1;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #c0392b;
+    }
+
+    nav {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    nav a button {
+      background-color: #95a5a6;
+      width: auto;
+      padding: 10px 18px;
+    }
+
+    nav a button:hover {
+      background-color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+
+
+  <h1>🔐 RSA Mã hóa / Giải mã tin nhắn</h1>
+
+  <form method="POST" action="/rsa-tool/<%= username %>" enctype="multipart/form-data">
+    <label for="action">Chọn hành động:</label>
+    <select name="action" id="action" onchange="updateKeyType()" required>
+      <option value="encrypt">🔐 Mã hóa</option>
+      <option value="decrypt">🔓 Giải mã</option>
+    </select>
+
+    <label for="message">Nội dung tin nhắn / ciphertext:</label>
+    <textarea id="message" name="message" rows="5" required placeholder="Nhập văn bản cần xử lý..."></textarea>
+
+    <label for="keyType">Loại khóa sử dụng:</label>
+    <select name="keyType" id="keyType" required>
+      <option value="public">🔓 Khóa công khai</option>
+      <option value="private">🔐 Khóa riêng tư</option>
+    </select>
+
+    <label for="keySource">Nguồn khóa:</label>
+    <select name="keySource" id="keySource" onchange="toggleKeyInput()" required>
+      <option value="text">Nhập khóa PEM</option>
+      <option value="file">Tải lên từ file</option>
+    </select>
+
+    <div id="keyTextInput">
+      <label for="key">Nội dung khóa (PEM):</label>
+      <textarea name="key" id="key" rows="8" placeholder="Dán nội dung khóa PEM tại đây..." required></textarea>
+    </div>
+
+    <div id="keyFileInput" style="display: none;">
+      <label for="keyFile">Chọn file PEM:</label>
+      <input type="file" name="keyFile" id="keyFile" accept=".pem" />
+    </div>
+
+    <button type="submit">▶️ Thực hiện</button>
+  </form>
+  <nav>
+    <a href="/keys/<%= username %>">
+      <button>← Quay về danh sách khóa</button>
+    </a>
+    <a href="/dashboard/<%= username %>">
+    <button>🏠 Quay về Home</button>
+    </a>
+  </nav>
+  <% if (error) { %>
+    <div class="error"><%= error %></div>
+  <% } %>
+
+  <% if (result) { %>
+    <div class="result"><strong>Kết quả:</strong><br><%= result %></div>
+  <% } %>
+
+  <script>
+    function toggleKeyInput() {
+      const keySource = document.getElementById("keySource").value;
+      document.getElementById("keyTextInput").style.display = keySource === "text" ? "block" : "none";
+      document.getElementById("keyFileInput").style.display = keySource === "file" ? "block" : "none";
+      document.getElementById("key").required = keySource === "text";
+    }
+
+    function updateKeyType() {
+      const action = document.getElementById("action").value;
+      const keyTypeSelect = document.getElementById("keyType");
+      keyTypeSelect.value = action === "encrypt" ? "public" : "private";
+    }
+
+    // Khởi tạo mặc định
+    document.addEventListener("DOMContentLoaded", function () {
+      updateKeyType();
+    });
+  </script>
+</body>
+</html>

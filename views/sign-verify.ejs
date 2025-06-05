@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔏 Ký và Xác minh File</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    form {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      color: #34495e;
+      margin-top: 15px;
+    }
+    input[type="file"] {
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #2980b9;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #1f618d;
+    }
+    .result, .error {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .result {
+      background-color: #ecf0f1;
+      color: #2c3e50;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #c0392b;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    nav a button {
+      background-color: #95a5a6;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+    }
+    nav a button:hover {
+      background-color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+
+
+  <h1>🔏 Ký và Xác minh File</h1>
+
+  <form action="/sign-file/<%= username %>" method="POST" enctype="multipart/form-data">
+    <h2>✍️ Ký file</h2>
+    <label>Chọn tệp tin cần ký:</label>
+    <input type="file" name="dataFile" required>
+
+    <label>Chọn khóa riêng tư (PEM):</label>
+    <input type="file" name="privateKey" accept=".pem" required>
+
+    <button type="submit">Ký file</button>
+  </form>
+
+  <form action="/verify-file/<%= username %>" method="POST" enctype="multipart/form-data">
+    <h2>✅ Xác minh chữ ký</h2>
+    <label>Chọn file dữ liệu gốc:</label>
+    <input type="file" name="dataFile" required>
+
+    <label>Chọn file chữ ký:</label>
+    <input type="file" name="signatureFile" required>
+
+    <label>Chọn khóa công khai (PEM):</label>
+    <input type="file" name="publicKey" accept=".pem" required>
+
+    <button type="submit">Xác minh file</button>
+  </form>
+  <nav>
+    <a href="/rsa-tool/<%= username %>">
+      <button>← Quay về trang mã hóa/giải mã</button>
+    </a>
+    <a href="/dashboard/<%= username %>">
+    <button>🏠 Quay về Home</button>
+    </a>
+  </nav>
+  <% if (error) { %>
+    <div class="error"><%= error %></div>
+  <% } %>
+
+  <% if (result) { %>
+    <div class="result"><%= result %></div>
+  <% } %>
+</body>
+</html>

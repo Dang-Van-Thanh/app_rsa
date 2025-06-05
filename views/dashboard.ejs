@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Xin chào <%= username %></h2>
+
+    <% if (publicKey && privateKey) { %>
+<h3>🔐 Khóa cá nhân:</h3>
+<pre><%= privateKey %></pre>
+<a href="/download/private/<%= username %>/<%= purpose.replace(/\s+/g, '_') %>">
+  <button>Tải khóa cá nhân</button>
+</a>
+
+<h3>🔓 Khóa công khai:</h3>
+<pre><%= publicKey %></pre>
+<a href="/download/public/<%= username %>/<%= purpose.replace(/\s+/g, '_') %>">
+  <button>Tải khóa công khai</button>
+</a>
+
+    <% } else { %>
+<form method="POST" action="/generate">
+  <input type="hidden" name="username" value="<%= username %>" />
+  
+  <label for="keySize">Chọn độ dài khóa:</label>
+  <select name="keySize" id="keySize" required>
+    <option value="512">🔰 Cơ bản (512-bit)</option>
+    <option value="1024" selected>⚖️ Trung bình (1024-bit)</option>
+    <option value="2048">🛡️ Mạnh (2048-bit)</option>
+  </select>
+
+  <label for="purpose">Mục đích sử dụng:</label>
+  <input type="text" name="purpose" id="purpose" placeholder="VD: Demo học RSA" required />
+
+  <button type="submit">Tạo khóa RSA</button>
+    <div class="button-group">
+    <a href="/keys/<%= username %>">
+      <button type="button">📂 Xem danh sách khóa</button>
+    </a>
+    <a href="/rsa-tool/<%= username %>">
+      <button type="button">🔐 Mã hóa / Giải mã</button>
+    </a>
+    <a href="/sign-verify/<%= username %>">
+    <button type="button">✍️ Ký / Xác minh file</button>
+    </a>
+  </div>
+
+</form>
+
+
+    <% } %>
+  </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tạo khóa RSA mới</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+      margin-top: 25px;
+      width: 100%;
+      background-color: #2980b9;
+      border: none;
+      color: white;
+      font-size: 18px;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #1f618d;
+    }
+
+    .nav-links {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      margin: 0 12px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h1>🗝️ Tạo khóa RSA mới</h1>
+  <form action="/generate" method="POST">
+    <input type="hidden" name="username" value="<%= username %>">
+
+    <label for="purpose">Mục đích sử dụng:</label>
+    <input type="text" id="purpose" name="purpose" placeholder="Ví dụ: Mã hóa email" required>
+
+    <label for="keySize">Chọn độ dài khóa:</label>
+    <select id="keySize" name="keySize">
+      <option value="1024">1024-bit (Cơ bản)</option>
+      <option value="2048" selected>2048-bit (Khuyến nghị)</option>
+      <option value="4096">4096-bit (Cao cấp)</option>
+    </select>
+
+    <button type="submit">Tạo khóa</button>
+  </form>
+
+  <div class="nav-links">
+    <a href="/keys/<%= username %>">📂 Xem danh sách khóa</a>
+    <a href="/rsa-tool/<%= username %>">🔐 Mã hóa / Giải mã</a>
+  </div>
+</body>
+</html>
